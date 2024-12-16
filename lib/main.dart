@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
-import 'mobile_number_screen.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart'; 
+import 'mobile_number_screen.dart'; 
+import 'package:otpwithanimation/services/auth_provider.dart'; 
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(
+    const MyApp(),
+  );
 }
 
 class MyApp extends StatelessWidget {
@@ -17,8 +21,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.green,
       ),
-      home:  MobileNumberScreen(),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => ApiProvider()),
+          
+        ],
+        child: MobileNumberScreen(),
+      ),
     );
   }
 }
- 

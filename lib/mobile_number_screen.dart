@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:otpwithanimation/services/auth_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';  
 import 'otp_screen.dart';
 
@@ -88,33 +90,35 @@ class _MobileNumberScreenState extends State<MobileNumberScreen>
     isInputVisible = false;
   });
 
-  try {
-    final url = Uri.parse('http://192.168.0.178:7000/authentication/send-otp/');
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({'phone_number': mobileNumber}),
-    );
-
-    if (response.statusCode == 200) {
-      setState(() {
-        isAnimating = false;
-      });
+  try{
+    final apiProvider = Provider.of<ApiProvider>(context,listen: false);
+    final response = await apiProvider.sendOtp(mobileNumber);
+    if(response)
+    {
+      
       Navigator.push(
         context,
-        MaterialPageRoute(
-          builder: (context) => OtpScreen(mobileNumber: mobileNumber),
-        ),
+        MaterialPageRoute(builder: (context)=> OtpScreen(mobileNumber: mobileNumber, apiProvider:apiProvider)
+         )
+      
       );
-    } else {
-      _showErrorSnackBar('Failed to send OTP. Please try again later.');
+      
     }
-  } catch (e) {
-    _showErrorSnackBar('An error occurred. Please try again.');
-  } finally {
+    else
+    {
+      _showErrorSnackBar("An error occured please try again");
+    }
+
+
+  }
+  catch(e){
+    _showErrorSnackBar("An error occured please try again");
+  }
+  finally{
     setState(() {
-      isAnimating = false;
-    });
+        isAnimating=false;
+
+      });
   }
 }
 

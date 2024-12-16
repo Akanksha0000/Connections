@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'dart:math';
-import 'package:http/http.dart' as http;
+import 'package:http/http.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
+import 'services/auth_provider.dart';
 import 'user_details.dart';
+// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobileNumber;
+  final ApiProvider apiProvider;
 
-  OtpScreen({required this.mobileNumber});
+  OtpScreen({super.key, required this.mobileNumber, required this.apiProvider});
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -84,7 +87,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
             borderRadius: BorderRadius.circular(8),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color: Colors.blue, width: 2),
+            borderSide: BorderSide(color: Colors.blue, width: 2),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
@@ -97,8 +100,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     );
   }
 
-   void _verifyOtp() async {
-
+  void _verifyOtp() async {
   setState(() {
     isAnimating = true;
     isContinueButtonVisible = false;
@@ -112,31 +114,39 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
       _otpController5.text +
       _otpController6.text;
 
-
-  print("otp is : $enteredOtp ");
-  print(widget.mobileNumber);
-  final url = Uri.parse('http://192.168.0.178:7000/authentication/verify-otp/');
-  final response = await http.post(
-    url,
-    headers: {'Content-Type': 'application/json'},
-    body: jsonEncode({
-      'phone_number': widget.mobileNumber,
-      'otp': enteredOtp,
-    }),
-  );
-
-  if (response.statusCode == 200) {
-  
+  try {
+   
+    final Map<String, dynamic> responseData = await widget.apiProvider.verifyOtp(widget.mobileNumber, enteredOtp);
+    print('responseData: $responseData');
     _controller.stop();
     setState(() {
       isAnimating = false;
     });
+
+    
+    final Map<String, dynamic> userDetails = responseData;
+
+    
+    final String refreshToken = userDetails['tokens']['refresh'];
+    final String accessToken = userDetails['tokens']['access'];
+
+   
+    // final storage = FlutterSecureStorage();
+    // await storage.write(key: 'access_token', value: accessToken);
+    // await storage.write(key: 'refresh_token', value: refreshToken);
+
+
     Navigator.push(
       context,
-      MaterialPageRoute(builder: (context) => const UserDetailsScreen(userId: 'userID', userPhonenumber: 'phoneNumber',)),
+      MaterialPageRoute(
+        builder: (context) => UserDetailsScreen(
+          userDetails: userDetails,
+          accessToken: accessToken,
+          refreshToken: refreshToken,
+        ),
+      ),
     );
-  } else {
-  
+  } catch (error) {
     _controller.stop();
     setState(() {
       isAnimating = false;
@@ -144,7 +154,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-    const  SnackBar(content: Text("Invalid OTP. Please try again.")),
+      SnackBar(content: Text("Error: $error")),
     );
   }
 }
@@ -216,7 +226,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
               ),
             ),
             if (isAnimating)
-            const Center(
+              const Center(
                 child: CircularProgressIndicator(),
               ),
             const Spacer(),
@@ -237,20 +247,6 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
               ),
             const Gap(20),
           ],
-        ),
-      ),
-    );
-  }
-}
-
-class SuccessScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return const  Scaffold(
-      body: Center(
-        child: Text(
-          "OTP Verified Successfully!",
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
         ),
       ),
     );

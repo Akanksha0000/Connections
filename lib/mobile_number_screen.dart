@@ -10,6 +10,8 @@ import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'otp_screen.dart';
 
 class MobileNumberScreen extends StatefulWidget {
+  const MobileNumberScreen({super.key});
+
   @override
   _MobileNumberScreenState createState() => _MobileNumberScreenState();
 }
@@ -343,7 +345,6 @@ void _showErrorSnackBar(String message) {
               right: 20,
               child: ElevatedButton(
                 onPressed: _mobileController.text.isNotEmpty ? _onContinuePressed : null,
-                child: const Text("Continue"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: _mobileController.text.isNotEmpty ? Colors.blue : Colors.grey,
                   foregroundColor: Colors.white,
@@ -352,6 +353,7 @@ void _showErrorSnackBar(String message) {
                     borderRadius: BorderRadius.circular(12),
                   ),
                 ),
+                child: const Text("Continue"),
               ),
             ),
         ],

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:otpwithanimation/Models/user_models.dart';  
+import 'package:otpwithanimation/Models/user_models.dart'; 
+import 'package:gap/gap.dart'; 
 
 
 class UserDetailsScreen extends StatelessWidget {
@@ -8,7 +9,7 @@ class UserDetailsScreen extends StatelessWidget {
   final String refreshToken;
 
 
-  UserDetailsScreen({
+  const UserDetailsScreen({super.key, 
     required this.userDetails,
     required this.accessToken,
     required this.refreshToken,
@@ -23,20 +24,20 @@ class UserDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('User Details'),
+        title: const Text('User Details'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('User ID: $userId', style: TextStyle(fontSize: 18)),
-            Text('Phone Number: $phoneNumber', style: TextStyle(fontSize: 18)),
-            Text('Created At: $createdAt', style: TextStyle(fontSize: 18)),
-            Text('Updated At: $updatedAt', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 20),
-            Text('Access Token: $accessToken', style: TextStyle(fontSize: 16, color: Colors.blue)),
-            SizedBox(height: 10),
+            Text('User ID: $userId', style: const TextStyle(fontSize: 18)),
+            Text('Phone Number: $phoneNumber', style: const TextStyle(fontSize: 18)),
+            Text('Created At: $createdAt', style: const TextStyle(fontSize: 18)),
+            Text('Updated At: $updatedAt', style: const TextStyle(fontSize: 18)),
+           const Gap(20),
+            Text('Access Token: $accessToken', style: const TextStyle(fontSize: 16, color: Colors.blue)),
+           const Gap(10)
             
           ],
         ),

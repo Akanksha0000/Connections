@@ -5,13 +5,13 @@ import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'services/auth_provider.dart';
 import 'user_details.dart';
-// import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class OtpScreen extends StatefulWidget {
   final String mobileNumber;
   final ApiProvider apiProvider;
 
-  OtpScreen({super.key, required this.mobileNumber, required this.apiProvider});
+  const OtpScreen({super.key, required this.mobileNumber, required this.apiProvider});
 
   @override
   _OtpScreenState createState() => _OtpScreenState();
@@ -87,7 +87,7 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
             borderRadius: BorderRadius.circular(8),
           ),
           focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.blue, width: 2),
+            borderSide: const BorderSide(color: Colors.blue, width: 2),
             borderRadius: BorderRadius.circular(8),
           ),
         ),
@@ -131,9 +131,9 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     final String accessToken = userDetails['tokens']['access'];
 
    
-    // final storage = FlutterSecureStorage();
-    // await storage.write(key: 'access_token', value: accessToken);
-    // await storage.write(key: 'refresh_token', value: refreshToken);
+    final storage = const FlutterSecureStorage();
+    await storage.write(key: 'access_token', value: accessToken);
+    await storage.write(key: 'refresh_token', value: refreshToken);
 
 
     Navigator.push(

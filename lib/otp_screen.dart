@@ -127,13 +127,13 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
     final Map<String, dynamic> userDetails = responseData;
 
     
-    final String refreshToken = userDetails['tokens']['refresh'];
+   // final String refreshToken = userDetails['tokens']['refresh'];
     final String accessToken = userDetails['tokens']['access'];
 
    
-    final storage = const FlutterSecureStorage();
+    const storage = FlutterSecureStorage();
     await storage.write(key: 'access_token', value: accessToken);
-    await storage.write(key: 'refresh_token', value: refreshToken);
+   // await storage.write(key: 'refresh_token', value: refreshToken);
 
 
     Navigator.push(
@@ -141,8 +141,8 @@ class _OtpScreenState extends State<OtpScreen> with SingleTickerProviderStateMix
       MaterialPageRoute(
         builder: (context) => UserDetailsScreen(
           userDetails: userDetails,
-          accessToken: accessToken,
-          refreshToken: refreshToken,
+          accessToken: accessToken, refreshToken: '',
+        //  refreshToken: refreshToken,
         ),
       ),
     );

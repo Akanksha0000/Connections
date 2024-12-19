@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
-import 'services/auth_provider.dart';  
+import 'services/auth_provider.dart';
 
 class UserDetailsScreen extends StatefulWidget {
   final Map<String, dynamic> userDetails;
@@ -27,7 +27,6 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   final _weightController = TextEditingController();
   final _heightController = TextEditingController();
 
-  
   Future<void> _fetchProfiles() async {
     final apiProvider = ApiProvider();
     final token = widget.accessToken;
@@ -48,10 +47,9 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
   @override
   void initState() {
     super.initState();
-    _fetchProfiles(); 
+    _fetchProfiles();
   }
 
-  
   Future<void> _createProfile() async {
     final name = _nameController.text;
     final age = _ageController.text;
@@ -84,6 +82,7 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
           const SnackBar(content: Text('Profile created successfully')),
         );
         _fetchProfiles(); 
+        Navigator.of(context).pop(); 
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('Failed to create profile')),
@@ -96,100 +95,153 @@ class _UserDetailsScreenState extends State<UserDetailsScreen> {
     }
   }
 
+  void _openProfileDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Add New Profile'),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                TextField(
+                  controller: _nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                TextField(
+                  controller: _ageController,
+                  decoration: const InputDecoration(labelText: 'Age'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _sexController,
+                  decoration: const InputDecoration(labelText: 'Sex (M/F)'),
+                ),
+                TextField(
+                  controller: _weightController,
+                  decoration: const InputDecoration(labelText: 'Weight'),
+                  keyboardType: TextInputType.number,
+                ),
+                TextField(
+                  controller: _heightController,
+                  decoration: const InputDecoration(labelText: 'Height'),
+                  keyboardType: TextInputType.number,
+                ),
+              ],
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancel'),
+            ),
+            ElevatedButton(
+              onPressed: _createProfile,
+              child: const Text('Add Now'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final userId = widget.userDetails['id'];
     final phoneNumber = widget.userDetails['phone_number'];
-    final createdAt = widget.userDetails['created_at'];
-    final updatedAt = widget.userDetails['updated_at'];
 
     return Scaffold(
+      backgroundColor: Colors.black, 
       appBar: AppBar(
-        title: const Text('User Details'),
+        backgroundColor: Colors.black, 
+        title: const Text(
+          'User Details',
+          style: TextStyle(
+            color: Colors.red, 
+            fontWeight: FontWeight.bold,
+            fontSize: 24,
+          ),
+        ),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('User ID: $userId', style: const TextStyle(fontSize: 18)),
-            Text('Phone Number: $phoneNumber', style: const TextStyle(fontSize: 18)),
-            Text('Created At: $createdAt', style: const TextStyle(fontSize: 18)),
-            Text('Updated At: $updatedAt', style: const TextStyle(fontSize: 18)),
+           
+            Text('Phone Number: $phoneNumber', style: const TextStyle(fontSize: 18, color: Colors.white)),
             const Gap(20),
+
             
-            // Show profiles or create profile option
             Expanded(
-              child: profileCount < 6
-                  ? Column(
-                      children: [
-                        // Show all profiles and the 'Create Profile' button
-                        Expanded(
-                          child: GridView.builder(
-                            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 3, // 3 columns
-                              crossAxisSpacing: 10,
-                              mainAxisSpacing: 10,
-                            ),
-                            itemCount: profiles.length,
-                            itemBuilder: (context, index) {
-                              final profile = profiles[index];
-                              return GestureDetector(
-                                onTap: () {
-                                  // Handle profile click (if needed)
-                                },
-                                child: Card(
-                                  child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
-                                    children: [
-                                      CircleAvatar(
-                                        radius: 30,
-                                        backgroundColor: Colors.grey,
-                                        child: Text(profile['name'][0], style: TextStyle(fontSize: 24)),
-                                      ),
-                                      Text(profile['name'], style: const TextStyle(fontSize: 16)),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
+              child: Column(
+                children: [
+                  if (profileCount < 6) 
+                    GestureDetector(
+                      onTap: _openProfileDialog,
+                      child: Container(
+                        width: 60, 
+                        height: 60, 
+                        decoration: BoxDecoration(
+                          color: Colors.grey[800], 
+                          borderRadius: BorderRadius.circular(8), 
+                        ),
+                        child: const Center(
+                          child:  Icon(
+                            Icons.add,
+                            size: 30,
+                            color: Colors.white,
                           ),
                         ),
-                        ElevatedButton(
-                          onPressed: _createProfile,
-                          child: const Text('Create Profile'),
-                        ),
-                      ],
-                    )
-                  : GridView.builder(
+                      ),
+                    ),
+                  const Gap(20),
+
+                 
+                  Expanded(
+                    child: GridView.builder(
                       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 3, // 3 columns
+                        crossAxisCount: 3,
                         crossAxisSpacing: 10,
                         mainAxisSpacing: 10,
                       ),
-                      itemCount: 6,
+                      itemCount: profiles.length,
                       itemBuilder: (context, index) {
                         final profile = profiles[index];
                         return GestureDetector(
                           onTap: () {
-                            // Handle profile click (if needed)
+                            
                           },
-                          child: Card(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                CircleAvatar(
-                                  radius: 30,
-                                  backgroundColor: Colors.grey,
-                                  child: Text(profile['name'][0], style: TextStyle(fontSize: 24)),
+                          child: Column(
+                            children: [
+                              Container(
+                                width: 60, 
+                                height: 60, 
+                                decoration: BoxDecoration(
+                                  color: Colors.grey[800], 
+                                  borderRadius: BorderRadius.circular(8), 
                                 ),
-                                Text(profile['name'], style: const TextStyle(fontSize: 16)),
-                              ],
-                            ),
+                                child: Center(
+                                  child: Text(
+                                    profile['name'][0], 
+                                    style: const TextStyle(fontSize: 24, color: Colors.white),
+                                  ),
+                                ),
+                              ),
+                              Gap(5),
+                              Text(
+                                profile['name'],
+                                style: const TextStyle(fontSize: 16, color: Colors.white),
+                                textAlign: TextAlign.center,
+                              ),
+                            ],
                           ),
                         );
                       },
                     ),
+                  ),
+                ],
+              ),
             ),
           ],
         ),

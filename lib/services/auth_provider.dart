@@ -86,27 +86,6 @@ class ApiProvider with ChangeNotifier {
     }
   }
 
-//   Future<Map<String, dynamic>> getProfiles(String token) async {
-//   final url = Uri.parse(ApiUrls.profileUrl); 
-
-//   try {
-//     final response = await http.get(
-//       url,
-//       headers: {
-//         'Authorization': 'Bearer $token', 
-//       },
-//     );
-
-//     if (response.statusCode == 200) {
-//       return jsonDecode(response.body); 
-//     } else {
-//       throw Exception('Failed to load profiles');
-//     }
-//   } catch (e) {
-//     throw Exception('Error: $e');
-//   }
-// }
-
 Future<Map<String, dynamic>> getProfiles(String token) async {
   final url = Uri.parse(ApiUrls.profileUrl); 
 
